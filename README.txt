@@ -1,3 +1,8 @@
+===Fork Purpose===
+I wanted to update this gem and get a version in rubygems thats easy to install and
+supported S3 properly.  The goal will be to do a pull request once that is stable
+and working well.
+
 ===CONTRIBUTE===
 Contributions are welcome via GitHub! Fork the code from
 http://github.com/jashmenn/backupgem/tree/master and send a pull request to jashmenn.
@@ -8,9 +13,9 @@ tool.  It's a beginning-to-end solution for scheduled backups in a clean ruby
 package that is simple use and powerful when customized.
 
 Backup allows you to specify each of the following options:
-* what is being archived (files, folders, arbitrary scripts)  
+* what is being archived (files, folders, arbitrary scripts)
 * how it's being archived (tar gzip, bz2)
-* where the archive is going (multiple backup servers? easy)           
+* where the archive is going (multiple backup servers? easy)
 * how the archive is going to get there (scp, ftp, mv)
 * where is will be stored when it gets there
 * how it's going to be rotated when it gets there (grandfather-father-son, etc)
@@ -21,7 +26,7 @@ Backup is a collection of scripts that is complete enough to save you
 time, but flexible enough to work with any situation.
 
 ===Getting Backup===
-====Prerequisites====   
+====Prerequisites====
 Backup makes the following assumptions about your machines:
 * server and client understand POSIX commmands
 * passwords and paths are the same on each server
@@ -61,7 +66,7 @@ compatible license.
 
 ===Support===
 Mailing lists, bug trackers, feature requests, and public forums are all
-available courtesty of [[http://rubyforge.org RubyForge]] at the 
+available courtesty of [[http://rubyforge.org RubyForge]] at the
 [[http://rubyforge.org/projects/backupgem BackupGem project page]].
 
 ====Mailing Lists====
@@ -72,7 +77,7 @@ available courtesty of [[http://rubyforge.org RubyForge]] at the
 |---
 | [[http://rubyforge.org/pipermail/backupgem-users backupgem-users]]
 | [[http://rubyforge.org/mailman/listinfo/backupgem-users subscribe / unsubscribe]]
-| The BackupGem users list is devoted to the discussion of and questions about the usage of Backup. If you can't quite figure out how to get a feature of Backup to work, this is the list you would go to in order to ask your questions. 
+| The BackupGem users list is devoted to the discussion of and questions about the usage of Backup. If you can't quite figure out how to get a feature of Backup to work, this is the list you would go to in order to ask your questions.
 |---
 | [[http://rubyforge.org/pipermail/backupgem-devel backupgem-devel]]
 | [[http://rubyforge.org/mailman/listinfo/backupgem-devel subscribe / unsubscribe]]
@@ -80,7 +85,7 @@ available courtesty of [[http://rubyforge.org RubyForge]] at the
 |}
 
 ===About the Author===
-Backup was written by [[mailto:nate@natemurray.com Nate Murray]. 
+Backup was written by [[mailto:nate@natemurray.com Nate Murray].
 Nate currently works at an internet retailer in Southern California.
 Feel free to send him compliments, candy, money, praise, or new feature patches--he likes
 all those things. You can send him questions and suggestions, too, if you
@@ -97,30 +102,30 @@ please use the trackers on the [[http://rubyforge.org/projects/backupgem BackupG
 ==How Backup Works==
 ===Intro===
 A basic backup has the following sequence:
-* content 
-* compress 
-* encrypt 
-* deliver 
-* rotate 
+* content
+* compress
+* encrypt
+* deliver
+* rotate
 * cleanup
 
-This order is the default, however, like most things it is customizable. 
+This order is the default, however, like most things it is customizable.
 Think of it like a pipline: the input of each step is the output of the last
 step.
 
-Each of these things are specified in a <tt>recipe</tt> file which is describe below. 
+Each of these things are specified in a <tt>recipe</tt> file which is describe below.
 
 ===CLI===
 
-  Usage: ./backup [options] 
+  Usage: ./backup [options]
   Recipe Options -----------------------
       -r, --recipe RECIPE              A recipe file to load. Multiple recipes
-                                       may be specified, and are loaded in the 
+                                       may be specified, and are loaded in the
                                        given order.
       -g, --global FILE                Specify the global recipe file to work
-                                       with. Defaults to the file <tt>global.rb</tt> 
-                                       in the directory of <tt>recipe</tt> 
-      -s, --set NAME=VALUE             Specify a variable and it's value to 
+                                       with. Defaults to the file <tt>global.rb</tt>
+                                       in the directory of <tt>recipe</tt>
+      -s, --set NAME=VALUE             Specify a variable and it's value to
                                        set. This will be set after loading all
                                        recipe files.
 
@@ -130,9 +135,9 @@ Each of these things are specified in a <tt>recipe</tt> file which is describe b
 
 * Each of the steps are specified as an <tt>action</tt>. (An action is really nothing more than a method that becomes defined in the Actor instance. See API docs if you're interestd.)
 
-* You may create "hook" actions for any of the actions. So if you define a method <tt>before_content</tt> it will be called just before <tt>content</tt> is called. A method named <tt>after_rotation</tt> would be called after rotation. This may not always be needed as you can customize the rotation order to be whatever you want. See [[#XXX]] below. 
+* You may create "hook" actions for any of the actions. So if you define a method <tt>before_content</tt> it will be called just before <tt>content</tt> is called. A method named <tt>after_rotation</tt> would be called after rotation. This may not always be needed as you can customize the rotation order to be whatever you want. See [[#XXX]] below.
 
-* Each action has the variable <tt>last_result</tt> available to it. This is the return value of the method that was called previously. Note that this includes the output of the "hook" methods. 
+* Each action has the variable <tt>last_result</tt> available to it. This is the return value of the method that was called previously. Note that this includes the output of the "hook" methods.
 
 * All configuration variables are available to actions via the hash c[]. For example, the backup path is available to your actions as c[:backup_path].
 
@@ -146,7 +151,7 @@ Required variables for all configurations.
 ! Example
 |---
 | :action_order
-| short desc. TODO 
+| short desc. TODO
 | set :action_order,      %w{ content compress encrypt deliver rotate cleanup }
 |---
 | :tmp_dir
@@ -166,34 +171,34 @@ to arbitrarily define your own.
 Some typical types of content are:
 * a particular file
 * a particular folder
-* the contents of a particular folder 
+* the contents of a particular folder
 
 These could be specified like so:
 
   action :content, :is_file   => "/path/to/file"               # content is a single file
   action :content, :is_file   => "/path/to/error_log", :recreate => true
-  action :content, :is_folder => "/path/to/folder"             # content is the folder itself 
+  action :content, :is_folder => "/path/to/folder"             # content is the folder itself
   action :content, :is_contents_of => "/path/to/other/folder"  # content is folder/* , recursive option
 
 If you want :content to be a series of shell commands just pass "action" a block:
 
-  action(:content) do 
+  action(:content) do
     sh "echo \"hello $HOSTNAME\""
-    sh "mysqldump -uroot database > /path/to/db.sql" 
-    "/path/to/db.sql" # make sure you return the full path to the folder/file you wish to be the content 
+    sh "mysqldump -uroot database > /path/to/db.sql"
+    "/path/to/db.sql" # make sure you return the full path to the folder/file you wish to be the content
   end
 
 ===Compress===
 Next you may want to compress your content. Again, there are a few one-liners for common cases and you can create your own.
 
-  action :compress, :method => :tar_bz2  # actually calls a method named tar_bz2 with output of ":content" ( or ":after_content" ) 
+  action :compress, :method => :tar_bz2  # actually calls a method named tar_bz2 with output of ":content" ( or ":after_content" )
   # or
-  action :compress, :method => :tar_gzip 
+  action :compress, :method => :tar_gzip
 
 Again, you can create your own.
 
-  action(:compress) 
-    sh "my_tar  #{last_result} #{last_result}.tar" 
+  action(:compress)
+    sh "my_tar  #{last_result} #{last_result}.tar"
     sh "my_bzip #{last_result}.tar #{last_result}.tar.bz2"
     last_result + ".tar.bz2"
   end
@@ -240,7 +245,7 @@ The <tt>:mv</tt> action is defined like any user-defined action:
 ! Example
 |---
 | :servers
-| An array of host names to deliver the data to. TODO this currently only supports 1 server. 
+| An array of host names to deliver the data to. TODO this currently only supports 1 server.
 | set :servers,           %w{ localhost }
 |---
 | :ssh_user
@@ -254,13 +259,13 @@ The <tt>:mv</tt> action is defined like any user-defined action:
 
 ==Rotate==
 Rotation of your backups is a way to keep snapshot copies of your backups in time while not keeping every single backup for every single day.
-Currently the only form of rotation Backup supports is [[grandfather-father-son]] See Appendix A if you are unfamiliar with how this works. 
+Currently the only form of rotation Backup supports is [[grandfather-father-son]] See Appendix A if you are unfamiliar with how this works.
 
   set :rotation_method,  :gfs # this is the default. you don't need to set it, but this is how you could
 
 By deafult, a <tt>son</tt> is created daily, unless it is a day to create a father or
 grandfather.  It is assumed that every time you run Backup you want to create a
-backup. Therefore, if you do not want to a son etc, do not run the program. 
+backup. Therefore, if you do not want to a son etc, do not run the program.
 You can specify when the son is promoted to a father by the following variable.
 
   set :son_promoted_on,    :fri
@@ -272,13 +277,13 @@ You specify when fathers are promoted to grandfathers by something like the foll
 Valid argumetns for specifying these promotions are as follows:
 * :mon-:sun - A symbol of the abbreviation of any day of the week
 * :last_*_of_the_month - A symbol, replacing the * with the abbreviation for the day of the weeks. Such as :last_fri_of_the_month.
-* Any valid Runt object. 
+* Any valid Runt object.
 
 Representing these [[temporal ranges]] is done internally by using Runt. You are, therefore, allowed to pass in your own arbitrarily complex runt object.
 Say for instance that I wanted to promote to fathers on monday, wednesday and friday. I could do something like the following:
 
-  mon_wed_fri = Runt::DIWeek.new(Runt::Mon) | 
-                Runt::DIWeek.new(Runt::Wed) | 
+  mon_wed_fri = Runt::DIWeek.new(Runt::Mon) |
+                Runt::DIWeek.new(Runt::Wed) |
                 Runt::DIWeek.new(Runt::Fri)
   set :son_promoted_on, mon_wed_fri
 
@@ -288,11 +293,11 @@ You can set how many of each rank to keep:
 
 set :sons_to_keep,         14
 set :fathers_to_keep,       6
-set :grandfathers_to_keep,  6   
+set :grandfathers_to_keep,  6
 
 ==Examples==
 
-Here we will cover three examples. 
+Here we will cover three examples.
 # a super-simple backup to a local directory, show how easy it is
 # a more complex implementation, show the variables you can set show the customizability and use of foreign server
 # every more complex. define your own method, use a global file to share in the configuration.
@@ -300,7 +305,7 @@ Here we will cover three examples.
 ===Example One: Backup folder of Logs===
 Our first example will be backing up a folder of logs. Say we have a folder
 '/var/my_logs/' and it is full of log files. It's full. Seriously, it's getting
-stuffy in there. 
+stuffy in there.
 Anyway, what we want is to:
 * move out all the old log files
 * compress them and store them in a local folder
@@ -323,8 +328,8 @@ Note a few things here.
 # Each time we <tt>set</tt> a variable that becomes available to the actions as <tt>c[:var]</tt>
 
 ===Example Two: SQL Backup===
-Our second example will be backing up a MediaWiki installation. 
-Say we have a MySQL database named 'mediawiki'. 
+Our second example will be backing up a MediaWiki installation.
+Say we have a MySQL database named 'mediawiki'.
 What we want is to:
 * create a dump of the database every day
 * compress this backup and store it in a local folder
@@ -350,9 +355,9 @@ Thankfully, this is incredibly simple:
   set :son_promoted_on,    :sun
   set :father_promoted_on, :last_sun_of_the_month
 
-  set :sons_to_keep,         21  
+  set :sons_to_keep,         21
   set :fathers_to_keep,      12
-  set :grandfathers_to_keep, 12 
+  set :grandfathers_to_keep, 12
 
 ===Example Three: Something more complex===
 
@@ -367,7 +372,7 @@ Thankfully, this is incredibly simple:
 
   set :encrypt, true
 
-  action :deliver,  :method => :scp  
+  action :deliver,  :method => :scp
   action :rotate,   :method => :via_ssh
 
   set :ssh_user,          "backup_user"
@@ -383,7 +388,7 @@ what is left to do:
 * lookup setup.rb files
 
 ==TODO==
-* Add in better logging 
+* Add in better logging
 
 ==BUGS==
 * You can't <tt>return</tt> in the user-defined actions for some reason. I think this
